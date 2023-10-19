@@ -1,134 +1,262 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-class Employee
+namespace OOP
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Gender { get; set; }
-    public double Salary { get; set; }
-}
-
-class Program
-{
-    static void Main()
+    internal class Employee
     {
-        Stack<Employee> employeeStack = new Stack<Employee>();
+        public int EmployeeID { get; set; }
+        public string Name { get; set; }
+        public string Gender { get; set; }
+        public int Salary { get; set; }
+        public DateTime Time { get; set; }
 
-        // Skapa fem objekt av Employee-klassen och lägg till dem i stacken
-        for (int i = 1; i <= 5; i++)
+        public Employee(int employeeID, string name, string gender, int salary, DateTime time)
         {
-            Employee employee = new Employee
+            EmployeeID = employeeID;
+            Name = name;
+            Gender = gender;
+            Salary = salary;
+            Time = time;
+        }
+
+        public static void Main(string[] args)
+        {
+            Stack<Employee> companyStack = new Stack<Employee>();
+
+            // Lägg till 10 anställda med olika attribut
+            PushEmployee(companyStack, 1, "Liza", "Non-Binary", 49000, DateTime.Now);
+            PushEmployee(companyStack, 2, "Ken", "Male", 47000, DateTime.Now);
+            PushEmployee(companyStack, 3, "Anna-Maria", "Female", 47000, DateTime.Now);
+            PushEmployee(companyStack, 4, "Kalle", "Male", 51500, DateTime.Now);
+            PushEmployee(companyStack, 5, "Olivia", "Non-Binary", 35000, DateTime.Now);
+            PushEmployee(companyStack, 6, "Lovisa", "Female", 45000, DateTime.Now);
+            PushEmployee(companyStack, 7, "Malin", "Female", 41000, DateTime.Now);
+            PushEmployee(companyStack, 8, "Christoffer", "Male", 59000, DateTime.Now);
+            PushEmployee(companyStack, 9, "Nemo", "Male", 46000, DateTime.Now);
+            PushEmployee(companyStack, 10, "Lina", "Female", 29000, DateTime.Now);
+
+            while (true)
             {
-                Id = i,
-                Name = "Employee" + i,
-                Gender = i % 2 == 0 ? "Male" : "Female",
-                Salary = 50000 + i * 1000
-            };
-            employeeStack.Push(employee);
-        }
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("Välkommen till Företaget AB:");
+                Console.WriteLine("1. Visa alla Anställda: ");
+                Console.WriteLine("2. Anställ en ny Person (Push): ");
+                Console.WriteLine("3. Sparka senast anställd (Pop): ");
+                Console.WriteLine("4. Visa senast anställd (Peek): ");
+                Console.WriteLine("5. Sök i Indexet med Fullständig information: ");
+                Console.WriteLine("6. Ge en Löneökning ");
+                Console.WriteLine("7. Avsluta Programmet ");
+                Console.Write("Var god gör ditt val: ");
+                Console.ResetColor();
 
-        Console.WriteLine("Objekt i Stack:");
+                int choice;
+                if (!int.TryParse(Console.ReadLine(), out choice))
+                {
+                    Console.WriteLine("Fel!!! Var god försök igen..\n");
+                    continue;
+                }
 
-        // Skriv ut alla objekt i stacken
-        foreach (var employee in employeeStack)
-        {
-            Console.WriteLine($"Id: {employee.Id}, Name: {employee.Name}, Gender: {employee.Gender}, Salary: {employee.Salary}");
-        }
-
-        Console.WriteLine($"Antal objekt kvar i Stack: {employeeStack.Count}");
-
-        Console.WriteLine("\nHämta alla objekt med Pop-metoden:");
-
-        // Hämta och skriv ut alla objekt med Pop-metoden
-        while (employeeStack.Count > 0)
-        {
-            var employee = employeeStack.Pop();
-            Console.WriteLine($"Popped: Id: {employee.Id}, Name: {employee.Name}, Gender: {employee.Gender}, Salary: {employee.Salary}");
-            Console.WriteLine($"Antal objekt kvar i Stack: {employeeStack.Count}");
-        }
-
-        // Lägg till alla objekt igen i Stack
-        for (int i = 1; i <= 5; i++)
-        {
-            Employee employee = new Employee
-            {
-                Id = i,
-                Name = "Employee" + i,
-                Gender = i % 2 == 0 ? "Male" : "Female",
-                Salary = 50000 + i * 1000
-            };
-            employeeStack.Push(employee);
-        }
-
-        Console.WriteLine("\nHämta objekt med Peek-metoden:");
-
-        // Hämta och skriv ut två objekt med Peek-metoden
-        for (int i = 0; i < 2; i++)
-        {
-            if (employeeStack.Count > 0)
-            {
-                var employee = employeeStack.Peek();
-                Console.WriteLine($"Peeked: Id: {employee.Id}, Name: {employee.Name}, Gender: {employee.Gender}, Salary: {employee.Salary}");
-                employeeStack.Pop(); // Ta bort objektet från Stack
-                Console.WriteLine($"Antal objekt kvar i Stack: {employeeStack.Count}");
+                try
+                {
+                    switch (choice)
+                    {
+                        case 1:
+                            ShowAllEmployees(companyStack);
+                            break;
+                        case 2:
+                            PushEmployee(companyStack); // Anropa PushEmployee för att lägga till en ny anställd
+                            break;
+                        case 3:
+                            PopEmployee(companyStack); // Anropa PopEmployee för att ta bort senast anställd
+                            break;
+                        case 4:
+                            PeekEmployee(companyStack); // Anropa PeekEmployee för att visa senast anställd
+                            break;
+                        case 5:
+                            SearchEmployee(companyStack);
+                            break;
+                        case 6:
+                            PromoteEmployee(companyStack);
+                            break;
+                        case 7:
+                            Console.WriteLine("Avslutar programmet.");
+                            return;
+                        default:
+                            Console.WriteLine("Felaktigt alternativ. Var god försök igen.\n");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ett fel uppstod: {ex.Message}\n");
+                }
             }
         }
 
-        Console.WriteLine("\nKolla om objekt nummer 3 finns i Stack eller inte:");
-
-        int employeeIdToFind = 3;
-        bool employeeExists = employeeStack.Contains(employeeStack.FirstOrDefault(e => e.Id == employeeIdToFind));
-        if (employeeExists)
+        private static void PushEmployee(Stack<Employee> companyStack)
         {
-            Console.WriteLine($"Objekt med Id {employeeIdToFind} finns i Stack.");
-        }
-        else
-        {
-            Console.WriteLine($"Objekt med Id {employeeIdToFind} finns inte i Stack.");
-        }
-
-        // Del 2 - List
-
-        List<Employee> employeeList = new List<Employee>();
-
-        // Lägg till fem objekt av Employee-klassen i listan
-        for (int i = 1; i <= 5; i++)
-        {
-            Employee employee = new Employee
+            Console.Write("Vad ska personen ha för ID: ");
+            int employeeID;
+            if (!int.TryParse(Console.ReadLine(), out employeeID))
             {
-                Id = i,
-                Name = "Employee" + i,
-                Gender = i % 2 == 0 ? "Male" : "Female",
-                Salary = 50000 + i * 1000
-            };
-            employeeList.Add(employee);
+                Console.WriteLine("Felaktigt ID-format. Var god försök igen.");
+                return;
+            }
+
+            Console.Write("Vad heter personen?: ");
+            string name = Console.ReadLine();
+            Console.WriteLine("Vad har personen för kön?: ");
+            string gender = Console.ReadLine();
+            Console.WriteLine("Vad har personen för löneanspråk? ");
+            int salary;
+            if (!int.TryParse(Console.ReadLine(), out salary))
+            {
+                Console.WriteLine("Felaktigt löneformat. Var god försök igen.");
+                return;
+            }
+            DateTime time = DateTime.Now; // Lägg till aktuell tid
+
+            PushEmployee(companyStack, employeeID, name, gender, salary, time); // Anropa den andra versionen av PushEmployee
+            Console.WriteLine("Anställd tillagd i systemet!\n");
         }
 
-        // Använd Contains-metoden för att söka efter Employee2 i listan
-        if (employeeList.Contains(employeeList.FirstOrDefault(e => e.Name == "Employee2")))
+        public static void ShowAllEmployees(Stack<Employee> companyStack)
         {
-            Console.WriteLine("\nEmployee2-objektet finns i listan.");
-        }
-        else
-        {
-            Console.WriteLine("\nEmployee2-objektet finns inte i listan.");
+            if (companyStack.Count == 0)
+            {
+                Console.WriteLine("Du har inga anställda ännu, Dags att anställa någon?");
+            }
+            else
+            {
+                Console.WriteLine("Alla Anställda:");
+                foreach (Employee currentEmployee in companyStack)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                    Console.WriteLine($"EmployeeID: {currentEmployee.EmployeeID}, Name: {currentEmployee.Name}, Gender: {currentEmployee.Gender}, Salary: {currentEmployee.Salary}, Time: {currentEmployee.Time}");
+                    Console.ResetColor();
+                }
+            }
+            Console.WriteLine();
         }
 
-        // Använd Find-metoden för att hitta det första manliga (Male) objektet i listan
-        var firstMaleEmployee = employeeList.Find(e => e.Gender == "Male");
-        if (firstMaleEmployee != null)
+        private static void PushEmployee(Stack<Employee> companyStack, int employeeID, string name, string gender, int salary, DateTime time)
         {
-            Console.WriteLine($"Det första manliga objektet i listan är: Id: {firstMaleEmployee.Id}, Name: {firstMaleEmployee.Name}");
+            Employee newEmployee = new Employee(employeeID, name, gender, salary, time);
+            companyStack.Push(newEmployee);
         }
 
-        // Använd FindAll-metoden för att hitta och skriva ut alla manliga (Male) objekt i listan
-        var maleEmployees = employeeList.FindAll(e => e.Gender == "Male");
-        Console.WriteLine("\nManliga objekt i listan:");
-        foreach (var maleEmployee in maleEmployees)
+        private static void PopEmployee(Stack<Employee> companyStack)
         {
-            Console.WriteLine($"Id: {maleEmployee.Id}, Name: {maleEmployee.Name}");
+            if (companyStack.Count > 0)
+            {
+                Employee removedEmployee = companyStack.Pop();
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine($"Senast anställd borttagen: EmployeeID: {removedEmployee.EmployeeID}, Name: {removedEmployee.Name}");
+                Console.WriteLine($"\n{removedEmployee.Name} har fått sparken! \n");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.WriteLine("Det finns inga anställda att ta bort.");
+            }
+        }
+
+        private static void PeekEmployee(Stack<Employee> companyStack)
+        {
+            if (companyStack.Count > 0)
+            {
+                Employee topEmployee = companyStack.Peek();
+                Console.WriteLine($"Senast anställd: EmployeeID: {topEmployee.EmployeeID}, Name: {topEmployee.Name}");
+            }
+            else
+            {
+                Console.WriteLine("Det finns inga anställda i systemet.");
+            }
+        }
+
+        private static void SearchEmployee(Stack<Employee> companyStack)
+        {
+            Console.Write("Skriv gärna ett nyckelord: ");
+            string chosenWord = Console.ReadLine().ToLower();
+
+            bool found = false;
+
+            foreach (Employee currentEmployee in companyStack)
+            {
+                if (currentEmployee.Name.ToLower().Contains(chosenWord))
+                {
+                    found = true;
+                    Console.WriteLine($"EmployeeID: {currentEmployee.EmployeeID}, Name: {currentEmployee.Name}, Gender: {currentEmployee.Gender}, Salary: {currentEmployee.Salary} Time: {currentEmployee.Time}");
+                }
+            }
+
+            if (!found)
+            {
+                Console.WriteLine($"Inget matchar din sökning... '{chosenWord}'.");
+            }
+
+            Console.WriteLine();
+        }
+
+        private static void PromoteEmployee(Stack<Employee> companyStack)
+        {
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+            Console.InputEncoding = System.Text.Encoding.Unicode;
+            Console.WriteLine("Vill du ge en löneökning till en enskild anställd (1) eller till alla anställda (2)?");
+            int promoteChoice;
+            if (!int.TryParse(Console.ReadLine(), out promoteChoice))
+            {
+                Console.WriteLine("Felaktigt val. Var god försök igen.");
+                return;
+            }
+
+            if (promoteChoice == 1)
+            {
+                Console.Write("Ange EmployeeID för den anställda du vill befordra: ");
+                int employeeID;
+                if (!int.TryParse(Console.ReadLine(), out employeeID))
+                {
+                    Console.WriteLine("Felaktigt ID-format. Var god försök igen.");
+                    return;
+                }
+
+                Employee employeeToPromote = null;
+
+                foreach (Employee currentEmployee in companyStack)
+                {
+                    if (currentEmployee.EmployeeID == employeeID)
+                    {
+                        employeeToPromote = currentEmployee;
+                        break;
+                    }
+                }
+
+                if (employeeToPromote != null)
+                {
+                    // En person får 5% löneökning.
+                    employeeToPromote.Salary = (int)(employeeToPromote.Salary * 1.05);
+                    Console.WriteLine($"Löneökning för {employeeToPromote.Name}. Den nya lönen är: {employeeToPromote.Salary}");
+                }
+                else
+                {
+                    Console.WriteLine("Anställd med det angivna EmployeeID hittades inte.");
+                }
+            }
+            else if (promoteChoice == 2)
+            {
+                foreach (Employee currentEmployee in companyStack)
+                {
+                    // 5% löneökning till alla!
+                    currentEmployee.Salary = (int)(currentEmployee.Salary * 1.05);
+                    Console.WriteLine($"Löneökning för {currentEmployee.Name}. Den nya lönen är: {currentEmployee.Salary}");
+                    Console.WriteLine("⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\r\n⠀⠀⠀⠀⠀⠀⢯⠙⠩⠀⡇⠊⠽⢖⠆⠀⠀⠀⠀⠀\r\n⠀⠀⠀⠀⠀⠀⠀⠱⣠⠀⢁⣄⠔⠁⠀⠀⠀⠀⠀⠀\r\n⠀⠀⠀⠀⠀⠀⠀⠀⣷⣶⣾⣾⠀⠀⠀⠀⠀⠀⠀⠀\r\n⠀⠀⠀⠀⠀⠀⢀⡔⠙⠈⢱⡟⣧⠀⠀⠀⠀⠀⠀⠀\r\n⠀⠀⠀⠀⠀⡠⠊⠀⠀⣀⡀⠀⠘⠕⢄⠀⠀⠀⠀⠀\r\n⠀⠀⠀⢀⠞⠀⠀⢀⣠⣿⣧⣀⠀⠀⢄⠱⡀⠀⠀⠀\r\n⠀⠀⡰⠃⠀⠀⢠⣿⠿⣿⡟⢿⣷⡄⠀⠑⢜⢆⠀⠀\r\n⠀⢰⠁⠀⠀⠀⠸⣿⣦⣿⡇⠀⠛⠋⠀⠨⡐⢍⢆⠀\r\n⠀⡇⠀⠀⠀⠀⠀⠙⠻⣿⣿⣿⣦⡀⠀⢀⠨⡒⠙⡄\r\n⢠⠁⡀⠀⠀⠀⣤⡀⠀⣿⡇⢈⣿⡷⠀⠠⢕⠢⠁⡇\r\n⠸⠀⡕⠀⠀⠀⢻⣿⣶⣿⣷⣾⡿⠁⠀⠨⣐⠨⢀⠃\r\n⠀⠣⣩⠘⠀⠀⠀⠈⠙⣿⡏⠁⠀⢀⠠⢁⡂⢉⠎⠀\r\n⠀⠀⠈⠓⠬⢀⣀⠀⠀⠈⠀⠀⠀⢐⣬⠴⠒⠁⠀⠀\r\n⠀⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Felaktigt val. Var god försök igen.");
+            }
         }
     }
 }
